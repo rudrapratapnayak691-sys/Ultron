@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Chat</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ULTRON AI</title>
+
   <style>
     * {
       box-sizing: border-box;
@@ -13,191 +14,159 @@
     }
 
     body {
+      background: linear-gradient(135deg, #172b9c, #3159f5);
       min-height: 100vh;
-      background: linear-gradient(180deg, #0a1f8f, #2450ff);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 14px;
-      color: #fff;
+      color: white;
     }
 
-    .app {
-      width: 100%;
-      max-width: 480px;
-      height: 92vh;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 28px;
-      backdrop-filter: blur(14px);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.28);
-    }
-
-    .header {
-      padding: 18px 20px;
+    header {
+      height: 85px;
+      padding: 20px 30px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      border-bottom: 1px solid rgba(255,255,255,0.2);
     }
 
-    .logo {
-      font-size: 22px;
-      font-weight: 800;
-      letter-spacing: 1px;
+    header h1 {
+      font-size: 30px;
     }
 
     .menu {
-      font-size: 28px;
+      font-size: 35px;
     }
 
-    .hero {
-      padding: 26px 20px 12px;
+    main {
+      padding: 45px 25px 140px;
+      max-width: 800px;
+      margin: auto;
     }
 
-    .hero h1 {
-      font-size: 34px;
-      line-height: 1;
-      margin-bottom: 10px;
-      font-weight: 900;
+    h2 {
+      font-size: 50px;
+      line-height: 1.05;
+      margin-bottom: 20px;
     }
 
-    .hero p {
-      font-size: 15px;
-      opacity: 0.9;
+    .subtitle {
+      font-size: 20px;
       line-height: 1.5;
+      opacity: 0.9;
+      margin-bottom: 35px;
     }
 
-    .chat {
-      flex: 1;
-      overflow-y: auto;
-      padding: 10px 16px 16px;
+    #chat {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 15px;
     }
 
-    .msg {
-      max-width: 82%;
-      padding: 12px 14px;
-      border-radius: 18px;
-      font-size: 15px;
-      line-height: 1.45;
-      word-wrap: break-word;
+    .message {
+      padding: 16px 20px;
+      border-radius: 20px;
+      max-width: 85%;
+      font-size: 17px;
+      line-height: 1.5;
       white-space: pre-wrap;
     }
 
-    .bot {
+    .ai {
+      background: rgba(255,255,255,0.18);
       align-self: flex-start;
-      background: rgba(255, 255, 255, 0.18);
-      border-top-left-radius: 6px;
     }
 
     .user {
+      background: white;
+      color: #18339e;
       align-self: flex-end;
-      background: #fff;
-      color: #1233c8;
-      border-top-right-radius: 6px;
     }
 
-    .inputbar {
-      padding: 14px;
-      background: rgba(255, 255, 255, 0.08);
-      border-top: 1px solid rgba(255, 255, 255, 0.12);
+    .input-area {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 18px;
+      background: rgba(30,70,210,0.95);
       display: flex;
-      gap: 10px;
+      gap: 12px;
+      max-width: 850px;
+      margin: auto;
     }
 
-    .inputbar input {
+    #question {
       flex: 1;
+      padding: 18px;
       border: none;
+      border-radius: 20px;
+      font-size: 17px;
       outline: none;
-      border-radius: 14px;
-      padding: 14px 16px;
-      font-size: 15px;
     }
 
-    .inputbar button {
+    #send {
+      padding: 0 28px;
       border: none;
-      border-radius: 14px;
-      background: #fff;
-      color: #1233c8;
-      font-weight: 800;
-      padding: 14px 18px;
+      border-radius: 20px;
+      background: white;
+      color: #18339e;
+      font-size: 17px;
+      font-weight: bold;
       cursor: pointer;
     }
 
-    .inputbar button:active {
-      transform: scale(0.98);
+    #send:disabled {
+      opacity: 0.6;
+    }
+
+    @media(max-width:600px) {
+      h2 {
+        font-size: 45px;
+      }
+
+      .input-area {
+        padding: 12px;
+      }
+
+      #send {
+        padding: 0 20px;
+      }
     }
   </style>
 </head>
+
 <body>
-  <div class="app">
-    <div class="header">
-      <div class="logo">ULTRON AI</div>
-      <div class="menu">☰</div>
-    </div>
 
-    <div class="hero">
-      <h1>Ask AI<br>Anything.</h1>
-      <p>Type your question and get a response from your AI website.</p>
-    </div>
+  <header>
+    <h1>ULTRON AI</h1>
+    <div class="menu">☰</div>
+  </header>
 
-    <div class="chat" id="chat">
-      <div class="msg bot">Hello! Ask me anything.</div>
-    </div>
+  <main>
+    <h2>Ask AI<br>Anything.</h2>
 
-    <div class="inputbar">
-      <input id="question" type="text" placeholder="Type your question..." />
-      <button onclick="sendQuestion()">Send</button>
+    <p class="subtitle">
+      Type your question and get a response from your AI assistant.
+    </p>
+
+    <div id="chat">
+      <div class="message ai">
+        Hello! I'm ULTRON AI. Ask me anything.
+      </div>
     </div>
+  </main>
+
+  <div class="input-area">
+    <input
+      id="question"
+      type="text"
+      placeholder="Type your question..."
+      autocomplete="off"
+    >
+
+    <button id="send">Send</button>
   </div>
 
-  <script>
-    const chat = document.getElementById("chat");
-    const input = document.getElementById("question");
+  <script src="script.js"></script>
 
-    async function sendQuestion() {
-      const text = input.value.trim();
-      if (!text) return;
-
-      const userMsg = document.createElement("div");
-      userMsg.className = "msg user";
-      userMsg.textContent = text;
-      chat.appendChild(userMsg);
-
-      input.value = "";
-      chat.scrollTop = chat.scrollHeight;
-
-      const botMsg = document.createElement("div");
-      botMsg.className = "msg bot";
-      botMsg.textContent = "Typing...";
-      chat.appendChild(botMsg);
-      chat.scrollTop = chat.scrollHeight;
-
-      try {
-        const res = await fetch("/ask", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ question: text })
-        });
-
-        const data = await res.json();
-        botMsg.textContent = data.answer || "No response received.";
-      } catch (error) {
-        botMsg.textContent = "Server error.";
-      }
-
-      chat.scrollTop = chat.scrollHeight;
-    }
-
-    input.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") sendQuestion();
-    });
-  </script>
 </body>
 </html>
