@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Question Interface</title>
+  <title>AI Chat</title>
   <style>
     * {
       box-sizing: border-box;
@@ -13,27 +13,27 @@
     }
 
     body {
-      background: linear-gradient(180deg, #0b2bd6, #1f4cff);
       min-height: 100vh;
+      background: linear-gradient(180deg, #0a1f8f, #2450ff);
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 16px;
-      color: white;
+      padding: 14px;
+      color: #fff;
     }
 
     .app {
       width: 100%;
       max-width: 480px;
-      height: 90vh;
+      height: 92vh;
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 24px;
-      backdrop-filter: blur(12px);
+      border-radius: 28px;
+      backdrop-filter: blur(14px);
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.28);
     }
 
     .header {
@@ -46,24 +46,23 @@
 
     .logo {
       font-size: 22px;
-      font-weight: 700;
+      font-weight: 800;
       letter-spacing: 1px;
     }
 
     .menu {
       font-size: 28px;
-      cursor: pointer;
     }
 
     .hero {
-      padding: 28px 20px 16px;
+      padding: 26px 20px 12px;
     }
 
     .hero h1 {
       font-size: 34px;
-      line-height: 1.05;
-      margin-bottom: 12px;
-      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 10px;
+      font-weight: 900;
     }
 
     .hero p {
@@ -74,8 +73,8 @@
 
     .chat {
       flex: 1;
-      padding: 16px 20px;
       overflow-y: auto;
+      padding: 10px 16px 16px;
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -86,50 +85,52 @@
       padding: 12px 14px;
       border-radius: 18px;
       font-size: 15px;
-      line-height: 1.4;
+      line-height: 1.45;
+      word-wrap: break-word;
+      white-space: pre-wrap;
     }
 
     .bot {
-      background: rgba(255, 255, 255, 0.18);
       align-self: flex-start;
+      background: rgba(255, 255, 255, 0.18);
       border-top-left-radius: 6px;
     }
 
     .user {
-      background: white;
-      color: #1430c8;
       align-self: flex-end;
+      background: #fff;
+      color: #1233c8;
       border-top-right-radius: 6px;
     }
 
-    .input-area {
-      padding: 16px;
-      display: flex;
-      gap: 10px;
+    .inputbar {
+      padding: 14px;
       background: rgba(255, 255, 255, 0.08);
       border-top: 1px solid rgba(255, 255, 255, 0.12);
+      display: flex;
+      gap: 10px;
     }
 
-    .input-area input {
+    .inputbar input {
       flex: 1;
       border: none;
       outline: none;
-      padding: 14px 16px;
       border-radius: 14px;
+      padding: 14px 16px;
       font-size: 15px;
     }
 
-    .input-area button {
+    .inputbar button {
       border: none;
-      background: #ffffff;
-      color: #1430c8;
-      padding: 14px 18px;
       border-radius: 14px;
-      font-weight: 700;
+      background: #fff;
+      color: #1233c8;
+      font-weight: 800;
+      padding: 14px 18px;
       cursor: pointer;
     }
 
-    .input-area button:active {
+    .inputbar button:active {
       transform: scale(0.98);
     }
   </style>
@@ -142,25 +143,25 @@
     </div>
 
     <div class="hero">
-      <h1>Ask AI<br />Anything.</h1>
-      <p>Type your question below and get an instant AI response.</p>
+      <h1>Ask AI<br>Anything.</h1>
+      <p>Type your question and get a response from your AI website.</p>
     </div>
 
     <div class="chat" id="chat">
-      <div class="msg bot">Hi! Ask me anything.</div>
+      <div class="msg bot">Hello! Ask me anything.</div>
     </div>
 
-    <div class="input-area">
-      <input type="text" id="questionInput" placeholder="Type your question..." />
+    <div class="inputbar">
+      <input id="question" type="text" placeholder="Type your question..." />
       <button onclick="sendQuestion()">Send</button>
     </div>
   </div>
 
   <script>
     const chat = document.getElementById("chat");
-    const input = document.getElementById("questionInput");
+    const input = document.getElementById("question");
 
-    function sendQuestion() {
+    async function sendQuestion() {
       const text = input.value.trim();
       if (!text) return;
 
@@ -172,16 +173,29 @@
       input.value = "";
       chat.scrollTop = chat.scrollHeight;
 
-      setTimeout(() => {
-        const botMsg = document.createElement("div");
-        botMsg.className = "msg bot";
-        botMsg.textContent = "This is a demo reply. Connect it to your AI backend for real answers.";
-        chat.appendChild(botMsg);
-        chat.scrollTop = chat.scrollHeight;
-      }, 700);
+      const botMsg = document.createElement("div");
+      botMsg.className = "msg bot";
+      botMsg.textContent = "Typing...";
+      chat.appendChild(botMsg);
+      chat.scrollTop = chat.scrollHeight;
+
+      try {
+        const res = await fetch("/ask", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question: text })
+        });
+
+        const data = await res.json();
+        botMsg.textContent = data.answer || "No response received.";
+      } catch (error) {
+        botMsg.textContent = "Server error.";
+      }
+
+      chat.scrollTop = chat.scrollHeight;
     }
 
-    input.addEventListener("keypress", function (e) {
+    input.addEventListener("keydown", (e) => {
       if (e.key === "Enter") sendQuestion();
     });
   </script>
