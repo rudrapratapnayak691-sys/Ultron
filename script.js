@@ -2,7 +2,7 @@ const questionInput = document.getElementById("question");
 const sendButton = document.getElementById("send");
 const chat = document.getElementById("chat");
 
-// Your live ULTRON AI backend
+// LIVE ULTRON AI BACKEND
 const API_URL = "https://ultron-3.onrender.com/chat";
 
 function addMessage(text, type) {
@@ -28,7 +28,7 @@ async function sendMessage() {
     return;
   }
 
-  // Show user message
+  // Show user's message
   addMessage(question, "user");
 
   // Clear input
@@ -58,9 +58,7 @@ async function sendMessage() {
     });
 
     if (!response.ok) {
-      throw new Error(
-        "Server error: " + response.status
-      );
+      throw new Error("Server error: " + response.status);
     }
 
     const data = await response.json();
@@ -68,9 +66,9 @@ async function sendMessage() {
     // Remove loading message
     loadingMessage.remove();
 
-    // Display AI answer
+    // Show AI response
     addMessage(
-      data.reply || "ULTRON AI did not return an answer.",
+      data.reply || "No answer received from ULTRON AI.",
       "ai"
     );
 
@@ -78,28 +76,22 @@ async function sendMessage() {
     console.error("ULTRON AI Error:", error);
 
     loadingMessage.textContent =
-      "⚠️ ULTRON AI couldn't connect to the server. Please try again.";
+      "⚠️ Couldn't connect to ULTRON AI. Please try again.";
   }
 
-  // Enable button again
+  // Enable button
   sendButton.disabled = false;
   sendButton.textContent = "Send";
 
   questionInput.focus();
 }
 
-// Send message when button is clicked
-sendButton.addEventListener(
-  "click",
-  sendMessage
-);
+// Send with button
+sendButton.addEventListener("click", sendMessage);
 
-// Send message when Enter is pressed
-questionInput.addEventListener(
-  "keydown",
-  function(event) {
-    if (event.key === "Enter") {
-      sendMessage();
-    }
+// Send with Enter key
+questionInput.addEventListener("keydown", function(event) {
+  if (event.key === "Enter") {
+    sendMessage();
   }
-);
+});
