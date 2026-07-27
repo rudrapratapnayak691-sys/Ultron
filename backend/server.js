@@ -1,96 +1,51 @@
-const questionInput = document.getElementById("question");
-const sendButton = document.getElementById("send");
-const chat = document.getElementById("chat");
+const express = require("express");
+const cors = require("cors");
 
-function addMessage(text, type) {
-  const message = document.createElement("div");
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-  message.className = "message " + type;
-  message.textContent = text;
+// Middleware
+app.use(cors());
+app.use(express.json());
 
-  chat.appendChild(message);
-
-  window.scrollTo({
-    top: document.body.scrollHeight,
-    behavior: "smooth"
+// Test route
+app.get("/", (req, res) => {
+  res.json({
+    status: "online",
+    message: "ULTRON AI backend is running 🤖"
   });
+});
 
-  return message;
-}
-
-async function sendMessage() {
-  const question = questionInput.value.trim();
-
-  if (!question) {
-    return;
-  }
-
-  // Show user's message
-  addMessage(question, "user");
-
-  // Clear input
-  questionInput.value = "";
-
-  // Disable button
-  sendButton.disabled = true;
-  sendButton.textContent = "Thinking...";
-
-  const loadingMessage = addMessage("ULTRON AI is thinking...", "ai");
-
+// AI chat route
+app.post("/chat", async (req, res) => {
   try {
+    const userMessage = req.body.message;
 
-    const response = await fetch("/chat", {
-      method: "POST",
-
-      headers: {
-        "Content-Type": "application/json"
-      },
-
-      body: JSON.stringify({
-        message: question
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error("Server returned " + response.status);
+    if (!userMessage) {
+      return res.status(400).json({
+        reply: "Please enter a question."
+      });
     }
 
-    const data = await response.json();
+    // Temporary response
+    // This proves that your frontend and backend are connected.
+    const reply =
+      "ULTRON AI received your message: " + userMessage;
 
-    loadingMessage.remove();
-
-    const answer =
-      data.reply ||
-      data.response ||
-      data.message ||
-      "I couldn't understand the server response.";
-
-    addMessage(answer, "ai");
+    res.json({
+      reply: reply
+    });
 
   } catch (error) {
+    console.error("Error:", error);
 
-    console.error("ULTRON AI Error:", error);
-
-    loadingMessage.textContent =
-      "⚠️ Server error. Make sure your AI backend is running and connected.";
-
-  } finally {
-
-    sendButton.disabled = false;
-    sendButton.textContent = "Send";
-
-    questionInput.focus();
+    res.status(500).json({
+      reply: "ULTRON AI server error."
+    });
   }
-}
+});
 
-// Send when button is clicked
-sendButton.addEventListener("click", sendMessage);
-
-// Send when Enter is pressed
-questionInput.addEventListener("keydown", function(event) {
-
-  if (event.key === "Enter") {
-    sendMessage();
-  }
-
+// Start server
+app.listen(PORT, () => {
+  console.log(`ULTRON AI backend running on port ${PORT}`);
 });
