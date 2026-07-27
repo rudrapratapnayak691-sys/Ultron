@@ -1,56 +1,96 @@
-const express = require("express");
-const path = require("path");
-const OpenAI = require("openai");
-require("dotenv").config();
+const questionInput = document.getElementById("question");
+const sendButton = document.getElementById("send");
+const chat = document.getElementById("chat");
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+function addMessage(text, type) {
+  const message = document.createElement("div");
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+  message.className = "message " + type;
+  message.textContent = text;
 
-app.use(express.json());
+  chat.appendChild(message);
 
-// Serve everything from the project root
-app.use(express.static(path.join(__dirname, "..")));
+  window.scrollTo({
+    top: document.body.scrollHeight,
+    behavior: "smooth"
+  });
 
-// Home page
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "..", "index.html"));
-});
+  return message;
+}
 
-// Optional route for readme.html
-app.get("/readme", (req, res) => {
-  res.sendFile(path.join(__dirname, "..", "readme.html"));
-});
+async function sendMessage() {
+  const question = questionInput.value.trim();
 
-// OpenAI chat route
-app.post("/ask", async (req, res) => {
+  if (!question) {
+    return;
+  }
+
+  // Show user's message
+  addMessage(question, "user");
+
+  // Clear input
+  questionInput.value = "";
+
+  // Disable button
+  sendButton.disabled = true;
+  sendButton.textContent = "Thinking...";
+
+  const loadingMessage = addMessage("ULTRON AI is thinking...", "ai");
+
   try {
-    const question = (req.body.question || "").trim();
 
-    if (!question) {
-      return res.status(400).json({ answer: "Question is required." });
-    }
+    const response = await fetch("/chat", {
+      method: "POST",
 
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        { role: "system", content: "You are a helpful assistant." },
-        { role: "user", content: question }
-      ],
-      temperature: 0.7,
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      body: JSON.stringify({
+        message: question
+      })
     });
 
-    const answer = response.choices?.[0]?.message?.content || "No answer returned.";
-    res.json({ answer });
-  } catch (error) {
-    console.error("OpenAI error:", error);
-    res.status(500).json({ answer: "Server error while calling OpenAI." });
-  }
-});
+    if (!response.ok) {
+      throw new Error("Server returned " + response.status);
+    }
 
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+    const data = await response.json();
+
+    loadingMessage.remove();
+
+    const answer =
+      data.reply ||
+      data.response ||
+      data.message ||
+      "I couldn't understand the server response.";
+
+    addMessage(answer, "ai");
+
+  } catch (error) {
+
+    console.error("ULTRON AI Error:", error);
+
+    loadingMessage.textContent =
+      "⚠️ Server error. Make sure your AI backend is running and connected.";
+
+  } finally {
+
+    sendButton.disabled = false;
+    sendButton.textContent = "Send";
+
+    questionInput.focus();
+  }
+}
+
+// Send when button is clicked
+sendButton.addEventListener("click", sendMessage);
+
+// Send when Enter is pressed
+questionInput.addEventListener("keydown", function(event) {
+
+  if (event.key === "Enter") {
+    sendMessage();
+  }
+
 });
