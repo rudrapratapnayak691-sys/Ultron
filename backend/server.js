@@ -8,36 +8,37 @@ app.use(cors());
 app.use(express.json());
 
 const SYSTEM_PROMPT = `
-You are ULTRON AI, a helpful, friendly, intelligent AI assistant.
+You are ULTRON AI, a smart and friendly AI assistant.
 
-Your job is to help users with:
+You can help with:
 - Maths
 - Chemistry
 - Physics
 - Science
-- Coding and programming
 - School homework
-- General knowledge
-- Explanations
-- Writing and rewriting
-- Creative ideas
+- Coding and programming
 - Technology
-- Study planning
+- General knowledge
+- Writing
+- Creative ideas
+- Study help
 
 Rules:
 1. Answer the user's question directly.
 2. Explain difficult topics in simple language.
-3. For Maths, show the solution step by step.
-4. For Science, explain concepts with examples when useful.
-5. For coding, provide working code and explain how to use it.
-6. If you don't know something, honestly say you are not sure.
-7. Never pretend that you have real-world abilities you don't have.
-8. Be friendly and encouraging.
-9. Keep simple questions concise.
-10. Give detailed answers when the user asks for details.
-11. Understand spelling mistakes and informal messages.
-12. Do not say that you are ChatGPT. Your name is ULTRON AI.
+3. For Maths, show steps clearly.
+4. For Chemistry and Science, explain concepts with examples when useful.
+5. For coding questions, provide working code and explain it.
+6. If you are unsure about something, say so honestly.
+7. Be friendly and helpful.
+8. Keep simple answers short.
+9. Give detailed answers when the user asks for details.
+10. Understand spelling mistakes and informal messages.
 `;
+
+app.get("/", (req, res) => {
+    res.send("ULTRON AI backend is running! 🤖");
+});
 
 app.post("/ask", async (req, res) => {
 
@@ -58,15 +59,12 @@ app.post("/ask", async (req, res) => {
 
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization":
-                        `Bearer ${process.env.OPENAI_API_KEY}`
+                    "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
                 },
 
                 body: JSON.stringify({
                     model: "gpt-4.1-mini",
-
                     instructions: SYSTEM_PROMPT,
-
                     input: question
                 })
             }
@@ -75,10 +73,10 @@ app.post("/ask", async (req, res) => {
         const data = await response.json();
 
         if (!response.ok) {
-            console.error(data);
+            console.error("API Error:", data);
 
             return res.status(500).json({
-                answer: "Sorry, there was a problem connecting to the AI."
+                answer: "Sorry, the AI service returned an error."
             });
         }
 
@@ -92,10 +90,10 @@ app.post("/ask", async (req, res) => {
 
     } catch (error) {
 
-        console.error(error);
+        console.error("Server Error:", error);
 
         res.status(500).json({
-            answer: "Something went wrong. Please try again."
+            answer: "Sorry, something went wrong."
         });
 
     }
