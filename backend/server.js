@@ -1,12 +1,16 @@
 const express = require("express");
 const cors = require("cors");
+const OpenAI = require("openai");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
 app.use(cors());
 app.use(express.json());
+
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+});
 
 // Test route
 app.get("/", (req, res) => {
@@ -16,7 +20,7 @@ app.get("/", (req, res) => {
   });
 });
 
-// AI chat route
+// Chat route
 app.post("/chat", async (req, res) => {
   try {
     const userMessage = req.body.message;
@@ -27,25 +31,34 @@ app.post("/chat", async (req, res) => {
       });
     }
 
-    // Temporary response
-    // This proves that your frontend and backend are connected.
-    const reply =
-      "ULTRON AI received your message: " + userMessage;
+    const response = await client.responses.create({
+      model: "gpt-4.1-mini",
+      input: [
+        {
+          role: "system",
+          content:
+            "You are ULTRON AI, a helpful, intelligent, friendly AI assistant. Give clear and accurate answers."
+        },
+        {
+          role: "user",
+          content: userMessage
+        }
+      ]
+    });
 
     res.json({
-      reply: reply
+      reply: response.output_text
     });
 
   } catch (error) {
-    console.error("Error:", error);
+    console.error("AI Error:", error);
 
     res.status(500).json({
-      reply: "ULTRON AI server error."
+      reply: "Sorry, ULTRON AI could not generate a response right now."
     });
   }
 });
 
-// Start server
 app.listen(PORT, () => {
-  console.log(`ULTRON AI backend running on port ${PORT}`);
+  console.log(`ULTRON AI running on port ${PORT}`);
 });
