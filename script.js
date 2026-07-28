@@ -2,8 +2,8 @@ const questionInput = document.getElementById("question");
 const sendButton = document.getElementById("send");
 const chat = document.getElementById("chat");
 
-// LIVE ULTRON AI BACKEND
-const API_URL = "https://ultron-3.onrender.com/chat";
+// Your Render backend
+const API_URL = "https://ultron-3.onrender.com/ask";
 
 function addMessage(text, type) {
   const message = document.createElement("div");
@@ -12,35 +12,27 @@ function addMessage(text, type) {
   message.textContent = text;
 
   chat.appendChild(message);
-
-  message.scrollIntoView({
-    behavior: "smooth",
-    block: "end"
-  });
+  chat.scrollTop = chat.scrollHeight;
 
   return message;
 }
 
-async function sendMessage() {
+async function askUltron() {
   const question = questionInput.value.trim();
 
-  if (!question) {
-    return;
-  }
+  if (!question) return;
 
-  // Show user's message
+  // Show user message
   addMessage(question, "user");
 
   // Clear input
   questionInput.value = "";
 
-  // Disable button
+  // Disable button while waiting
   sendButton.disabled = true;
-  sendButton.textContent = "Thinking...";
 
-  // Show loading message
-  const loadingMessage = addMessage(
-    "ULTRON AI is thinking... 🤖",
+  const aiMessage = addMessage(
+    "ULTRON is thinking... 🤖",
     "ai"
   );
 
@@ -53,7 +45,7 @@ async function sendMessage() {
       },
 
       body: JSON.stringify({
-        message: question
+        question: question
       })
     });
 
@@ -63,35 +55,29 @@ async function sendMessage() {
 
     const data = await response.json();
 
-    // Remove loading message
-    loadingMessage.remove();
-
-    // Show AI response
-    addMessage(
-      data.reply || "No answer received from ULTRON AI.",
-      "ai"
-    );
+    aiMessage.textContent =
+      data.answer ||
+      data.response ||
+      data.message ||
+      "ULTRON received your message but didn't return an answer.";
 
   } catch (error) {
-    console.error("ULTRON AI Error:", error);
+    console.error("ULTRON ERROR:", error);
 
-    loadingMessage.textContent =
+    aiMessage.textContent =
       "⚠️ Couldn't connect to ULTRON AI. Please try again.";
   }
 
-  // Enable button
   sendButton.disabled = false;
-  sendButton.textContent = "Send";
-
   questionInput.focus();
 }
 
-// Send with button
-sendButton.addEventListener("click", sendMessage);
+// Send button
+sendButton.addEventListener("click", askUltron);
 
-// Send with Enter key
-questionInput.addEventListener("keydown", function(event) {
+// Press Enter to send
+questionInput.addEventListener("keydown", (event) => {
   if (event.key === "Enter") {
-    sendMessage();
+    askUltron();
   }
 });
