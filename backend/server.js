@@ -1,60 +1,44 @@
 const express = require("express");
 const cors = require("cors");
-const OpenAI = require("openai");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
+const PORT = process.env.PORT || 10000;
+
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
-
 // Test route
 app.get("/", (req, res) => {
-  res.json({
-    status: "online",
-    message: "ULTRON AI backend is running 🤖"
-  });
+  res.send("ULTRON AI backend is running 🤖");
 });
 
-// Chat route
-app.post("/chat", async (req, res) => {
+// AI route
+app.post("/ask", async (req, res) => {
   try {
-    const userMessage = req.body.message;
+    const { question } = req.body;
 
-    if (!userMessage) {
+    if (!question) {
       return res.status(400).json({
-        reply: "Please enter a question."
+        error: "Please provide a question."
       });
     }
 
-    const response = await client.responses.create({
-      model: "gpt-4.1-mini",
-      input: [
-        {
-          role: "system",
-          content:
-            "You are ULTRON AI, a helpful, intelligent, friendly AI assistant. Give clear and accurate answers."
-        },
-        {
-          role: "user",
-          content: userMessage
-        }
-      ]
-    });
+    // Temporary AI response
+    // Replace this section with your AI API later
+    const answer =
+      "ULTRON AI received your question: " + question;
 
     res.json({
-      reply: response.output_text
+      answer: answer
     });
 
   } catch (error) {
-    console.error("AI Error:", error);
+    console.error("Error:", error);
 
     res.status(500).json({
-      reply: "Sorry, ULTRON AI could not generate a response right now."
+      error: "ULTRON AI server error."
     });
   }
 });
