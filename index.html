@@ -3,36 +3,80 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ULTRON AI</title>
+
+  <title>ULTRON AI | Kokushibo Mode</title>
+
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
+  <div class="background-eyes"></div>
+
   <div class="app">
-    <header>
-      <h1>🤖 ULTRON AI</h1>
-      <p>Your AI Assistant</p>
+
+    <header class="topbar">
+
+      <div class="logo">
+        <div class="eye">👁️</div>
+
+        <div>
+          <h1>ULTRON AI</h1>
+          <p>KOKUSHIBO MODE</p>
+        </div>
+      </div>
+
+      <div class="status">
+        <span class="status-dot"></span>
+        ONLINE
+      </div>
+
     </header>
 
+
     <main id="chat">
-      <div class="message ai">
-        Hello! I'm ULTRON AI. Ask me anything.
+
+      <div class="welcome">
+
+        <div class="kokushibo-symbol">
+          👁️
+        </div>
+
+        <h2>Welcome to ULTRON AI</h2>
+
+        <p>
+          The six-eyed intelligence awakens.
+          Ask your question.
+        </p>
+
       </div>
+
     </main>
 
-    <div class="input-area">
+
+    <div class="input-container">
+
       <input
         id="question"
         type="text"
-        placeholder="Ask ULTRON anything..."
+        placeholder="Speak to ULTRON..."
         autocomplete="off"
       >
 
-      <button id="send">➤</button>
+      <button id="send">
+        ➤
+      </button>
+
     </div>
+
+    <footer>
+      ULTRON AI • KOKUSHIBO MODE
+    </footer>
+
   </div>
 
+
   <script src="script.js"></script>
+
 </body>
 </html>
