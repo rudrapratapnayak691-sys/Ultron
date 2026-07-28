@@ -1,7 +1,7 @@
 {
   "name": "ultron-ai",
   "version": "1.0.0",
-  "description": "ULTRON AI Backend",
+  "description": "ULTRON AI Kokushibo Mode",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
